@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ShareIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface ResultData {
   type: string;
@@ -29,12 +30,17 @@ export default function ResultPage() {
   const [result, setResult] = useState<ResultData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userAnswers, setUserAnswers] = useState<Answer[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     // Get answers from localStorage
     const savedAnswers = localStorage.getItem('quiz_answers');
     if (savedAnswers) {
       setUserAnswers(JSON.parse(savedAnswers));
+    } else {
+      // If no answers found, redirect to the default page
+      router.push('/result/default');
+      return;
     }
 
     const getPersonalityType = () => {
@@ -72,7 +78,12 @@ export default function ResultPage() {
     if (type) {
       // Fetch the result data for this personality type
       fetch(`/result/${type}.json`)
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Result not found');
+          }
+          return response.json();
+        })
         .then(data => {
           setResult(data);
           setIsLoading(false);
@@ -80,11 +91,15 @@ export default function ResultPage() {
         .catch(error => {
           console.error('Error fetching result:', error);
           setIsLoading(false);
+          // If there's an error fetching the result, redirect to the default page
+          router.push('/result/default');
         });
     } else {
       setIsLoading(false);
+      // If no personality type is determined, redirect to the default page
+      router.push('/result/default');
     }
-  }, [userAnswers]);
+  }, [userAnswers, router]);
 
   const handleShare = async () => {
     if (!result) return;
@@ -109,11 +124,7 @@ export default function ResultPage() {
   }
 
   if (!result) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-black">
-        <div className="text-white text-xl">결과를 찾을 수 없습니다.</div>
-      </div>
-    );
+    return null; // This will be replaced by the redirect
   }
 
   return (
