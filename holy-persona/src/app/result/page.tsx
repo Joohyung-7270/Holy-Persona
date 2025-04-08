@@ -50,8 +50,11 @@ export default function ResultPage() {
       };
       
       userAnswers.forEach((answer) => {
-        const optionType = answer.optionId.split('_')[0];
-        if (optionType in types) {
+        const [optionType] = answer.optionId.split('_');
+        if (optionType && (optionType === 'L' || optionType === 'S' || 
+            optionType === 'A' || optionType === 'R' || 
+            optionType === 'F' || optionType === 'T' || 
+            optionType === 'O' || optionType === 'I')) {
           types[optionType as keyof typeof types]++;
         }
       });
