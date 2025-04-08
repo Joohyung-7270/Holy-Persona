@@ -12,12 +12,12 @@
 
 ## 🌟 Discover Your Biblical Persona
 
-Holy Persona is an AI-powered personality assessment tool that matches you with biblical characters based on your personality traits, leadership style, and faith expression. Through a carefully designed questionnaire, we analyze your responses to determine which biblical figure you most closely resemble.
+Holy Persona is a Holy Question assessment tool that matches you with biblical characters based on your personality traits, leadership style, and faith expression. Through carefully designed Holy Questions, we analyze your responses to determine which biblical figure you most closely resemble.
 
 ## ✨ Features
 
-- **AI-Powered Analysis**: Advanced algorithms to match your personality with biblical characters
-- **Comprehensive Assessment**: 8 questions across 4 personality axes
+- **Holy Question Analysis**: Advanced assessment to match your personality with biblical characters
+- **Comprehensive Assessment**: 8 Holy Questions across 4 personality axes
 - **Beautiful Results**: Visually stunning result pages with detailed character descriptions
 - **Share Your Results**: Easily share your biblical persona with friends and family
 - **Responsive Design**: Works seamlessly on all devices
@@ -25,12 +25,39 @@ Holy Persona is an AI-powered personality assessment tool that matches you with 
 
 ## 🧩 Personality Axes
 
-Our assessment analyzes four key dimensions of your personality:
+Our Holy Questions analyze four key dimensions of your personality:
 
 1. **Leadership vs. Support**: How you approach leading or supporting others
 2. **Action vs. Reflection**: Your tendency toward action or thoughtful consideration
 3. **Feeling vs. Thinking**: How you process information and make decisions
 4. **Outward Faith vs. Inward Faith**: How you express your faith
+
+## 📊 Personality Types
+
+Based on your responses to the Holy Questions, you'll be matched with one of several biblical personality types:
+
+### LAFO (Leadership, Action, Feeling, Outward Faith)
+**Biblical Character: David**
+- **Title**: "A Man After God's Own Heart"
+- **Description**: A courageous and passionate leader who expresses his faith outwardly through worship and praise. Known for his creativity, emotional expressiveness, and strong leadership qualities.
+- **MBTI Equivalent**: ENFP
+- **Key Traits**: Creative, passionate, spiritually expressive, emotionally intelligent
+
+### SRTI (Support, Reflection, Thinking, Inward Faith)
+**Biblical Character: Moses**
+- **Title**: "Humble Leader"
+- **Description**: A thoughtful and systematic leader who approaches challenges with careful consideration and relies on divine wisdom. Known for his humility, deep thinking, and dedicated service.
+- **MBTI Equivalent**: ISTJ
+- **Key Traits**: Systematic, humble, thoughtful, spiritually contemplative
+
+### ARFO (Action, Reflection, Feeling, Outward Faith)
+**Biblical Character: Paul**
+- **Title**: "Passionate Evangelist"
+- **Description**: A dynamic and passionate individual who combines action with deep reflection. Expresses faith outwardly through evangelism and teaching, with a strong emotional connection to his mission.
+- **MBTI Equivalent**: ENFJ
+- **Key Traits**: Passionate, theological, emotionally expressive, mission-driven
+
+*More personality types are available in the application.*
 
 ## 🚀 Getting Started
 

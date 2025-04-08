@@ -187,105 +187,143 @@ export default function ResultPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <motion.div 
-              className="flex flex-col justify-center"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <h1 className="text-4xl font-bold mb-2">{result.name}</h1>
-              <p className="text-xl text-yellow-400 mb-4">{result.title}</p>
-              <div className="relative w-full max-w-sm mx-auto aspect-square">
-                <Image
-                  src={result.image}
-                  alt={result.name}
-                  fill
-                  className="object-contain"
-                  priority
-                />
-              </div>
-            </motion.div>
-            <motion.div 
-              className="flex flex-col justify-center"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <div className="space-y-6">
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.6 }}
-                >
-                  <h2 className="text-2xl font-semibold mb-3">성경 인물 유형</h2>
-                  <p className="text-white/80 leading-relaxed">
-                    {result.description}
-                  </p>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.7 }}
-                >
-                  <h2 className="text-2xl font-semibold mb-3">특징</h2>
-                  <ul className="list-disc list-inside space-y-2 text-white/80">
-                    {result.characteristics.map((characteristic, index) => (
-                      <motion.li 
-                        key={index}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: 0.8 + index * 0.1 }}
-                      >
-                        {characteristic}
-                      </motion.li>
-                    ))}
-                  </ul>
-                </motion.div>
-              </div>
-            </motion.div>
-          </div>
-
-          <div className="space-y-6">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.9 }}
-            >
-              <h2 className="text-2xl font-semibold mb-3">MBTI 유형: {result.mbti.type}</h2>
-              <p className="text-white/80 leading-relaxed">
-                {result.mbti.description}
+          <div className="max-w-4xl mx-auto px-4 py-8">
+            <div className="text-center mb-12">
+              <h1 className="text-4xl font-bold text-white mb-4">Holy Question 결과</h1>
+              <p className="text-lg text-gray-300">
+                당신의 Holy Question 응답을 분석한 결과입니다. 성경 속 인물 중 당신과 가장 닮은 인물을 찾아드립니다.
               </p>
-            </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 1 }}
-            >
-              <h2 className="text-2xl font-semibold mb-3">축복의 말씀</h2>
-              <p className="text-white/80 leading-relaxed italic">
-                {result.blessing}
-              </p>
-            </motion.div>
-          </div>
-        </motion.div>
+            </div>
 
-        <motion.div 
-          className="flex justify-center mt-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 1.1 }}
-        >
-          <motion.button
-            onClick={handleShare}
-            className="flex items-center gap-2 bg-yellow-400 text-blue-900 px-6 py-3 rounded-lg font-semibold hover:bg-yellow-300 transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <ShareIcon className="w-5 h-5" />
-            결과 공유하기
-          </motion.button>
+            {isLoading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-400 mx-auto mb-4"></div>
+                <p className="text-gray-300">결과를 불러오는 중...</p>
+              </div>
+            ) : isDirectAccess ? (
+              <div className="text-center py-12">
+                <p className="text-red-400 mb-4">{isDirectAccess}</p>
+                <Link href="/" className="text-yellow-400 hover:text-yellow-300">
+                  메인으로 돌아가기
+                </Link>
+              </div>
+            ) : result ? (
+              <div className="space-y-12">
+                {/* Character Name and Title */}
+                <div className="text-center">
+                  <h2 className="text-5xl font-bold text-white mb-2">{result.name}</h2>
+                  <p className="text-2xl text-yellow-400">{result.title}</p>
+                  <p className="text-lg text-yellow-400/80 mt-4">유형: {result.type}</p>
+                </div>
+
+                {/* Image and Description Grid */}
+                <div className="grid md:grid-cols-2 gap-8 items-start">
+                  <div className="relative aspect-square rounded-lg overflow-hidden bg-black/30">
+                    <Image
+                      src={result.image}
+                      alt={result.name}
+                      fill
+                      className="object-contain p-4"
+                      priority
+                    />
+                  </div>
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-xl font-semibold text-white mb-3">인물 설명</h3>
+                      <p className="text-gray-300 leading-relaxed">{result.description}</p>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-white mb-3">특징</h3>
+                      <ul className="list-disc list-inside text-gray-300 space-y-2">
+                        {result.characteristics.map((char, index) => (
+                          <li key={index}>{char}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Personality Type Section */}
+                <div className="bg-black/30 rounded-lg p-6">
+                  <h3 className="text-xl font-semibold text-white mb-4">성경 인물 유형 분석</h3>
+                  <div className="space-y-6">
+                    <div>
+                      <h4 className="text-lg font-medium text-yellow-400 mb-2">유형: {result.type}</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <div className="bg-black/40 p-3 rounded-lg">
+                          <p className="text-yellow-400 font-medium">{result.type.charAt(0)}</p>
+                          <p className="text-gray-300 text-sm">
+                            {result.type.charAt(0) === 'L' ? 'Leadership (리더십)' : 'Support (지원)'}
+                          </p>
+                        </div>
+                        <div className="bg-black/40 p-3 rounded-lg">
+                          <p className="text-yellow-400 font-medium">{result.type.charAt(1)}</p>
+                          <p className="text-gray-300 text-sm">
+                            {result.type.charAt(1) === 'A' ? 'Action (행동)' : 'Reflection (성찰)'}
+                          </p>
+                        </div>
+                        <div className="bg-black/40 p-3 rounded-lg">
+                          <p className="text-yellow-400 font-medium">{result.type.charAt(2)}</p>
+                          <p className="text-gray-300 text-sm">
+                            {result.type.charAt(2) === 'F' ? 'Feeling (감정)' : 'Thinking (사고)'}
+                          </p>
+                        </div>
+                        <div className="bg-black/40 p-3 rounded-lg">
+                          <p className="text-yellow-400 font-medium">{result.type.charAt(3)}</p>
+                          <p className="text-gray-300 text-sm">
+                            {result.type.charAt(3) === 'O' ? 'Outward Faith (외향적 신앙)' : 'Inward Faith (내향적 신앙)'}
+                          </p>
+                        </div>
+                      </div>
+                      <p className="text-gray-300 mb-4">
+                        {result.type === "LAFO" && "당신은 다윗과 같은 리더십, 행동력, 감성, 외향적 신앙을 가진 성격입니다. 하나님의 마음에 합한 자로서, 창의적이고 열정적인 리더십을 발휘하며, 감정을 자유롭게 표현하고 신앙을 적극적으로 나누는 특성이 있습니다."}
+                        {result.type === "SRTI" && "당신은 모세와 같은 지원, 성찰, 사고, 내향적 신앙을 가진 성격입니다. 겸손한 지도자로서, 신중하고 체계적인 접근 방식을 가지고 있으며, 깊은 영적 성찰을 통해 하나님의 지혜를 구하는 특성이 있습니다."}
+                        {result.type === "ARFO" && "당신은 바울과 같은 행동력, 성찰, 감성, 외향적 신앙을 가진 성격입니다. 열정적인 전도자로서, 깊은 신학적 통찰과 함께 적극적인 신앙 표현을 하며, 감정과 이성을 균형 있게 사용하는 특성이 있습니다."}
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-medium text-yellow-400 mb-2">MBTI: {result.mbti.type}</h4>
+                      <p className="text-gray-300">{result.mbti.description}</p>
+                    </div>
+                    {result.type === "LAFO" && (
+                      <div className="bg-black/40 p-4 rounded-lg">
+                        <h4 className="text-lg font-medium text-yellow-400 mb-2">LAFO 유형 상세 설명</h4>
+                        <p className="text-gray-300 mb-3">
+                          LAFO는 다음 네 가지 성격 축의 조합을 나타냅니다:
+                        </p>
+                        <ul className="list-disc list-inside text-gray-300 space-y-2 mb-3">
+                          <li><span className="text-yellow-400">L (Leadership)</span>: 리더십 성향 - 타인을 이끄는 것을 선호</li>
+                          <li><span className="text-yellow-400">A (Action)</span>: 행동 지향 - 신중한 계획보다 즉각적인 행동을 선호</li>
+                          <li><span className="text-yellow-400">F (Feeling)</span>: 감정 중심 - 논리보다 감정과 관계를 중요시</li>
+                          <li><span className="text-yellow-400">O (Outward Faith)</span>: 외향적 신앙 - 신앙을 외부적으로 표현하는 것을 선호</li>
+                        </ul>
+                        <p className="text-gray-300">
+                          LAFO 유형의 사람들은 다윗처럼 창의적이고 열정적인 리더십, 감정의 자유로운 표현, 그리고 외향적인 신앙 표현을 통해 하나님의 마음에 합한 자로서의 특성을 보여줍니다.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Blessing Section */}
+                <div className="text-center space-y-4">
+                  <h3 className="text-2xl font-semibold text-white">당신을 위한 축복</h3>
+                  <p className="text-xl text-yellow-400 italic">{result.blessing}</p>
+                </div>
+
+                {/* Share Button */}
+                <div className="text-center">
+                  <button
+                    onClick={handleShare}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-yellow-400/10 hover:bg-yellow-400/20 text-yellow-400 rounded-lg transition-colors"
+                  >
+                    <ShareIcon className="w-5 h-5" />
+                    결과 공유하기
+                  </button>
+                </div>
+              </div>
+            ) : null}
+          </div>
         </motion.div>
       </motion.div>
     </div>
