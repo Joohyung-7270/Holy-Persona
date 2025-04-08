@@ -30,76 +30,87 @@ export default function ResultPage() {
   const [result, setResult] = useState<ResultData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userAnswers, setUserAnswers] = useState<Answer[]>([]);
+  const [isDirectAccess, setIsDirectAccess] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    // Get answers from localStorage
-    const savedAnswers = localStorage.getItem('quiz_answers');
-    if (savedAnswers) {
-      setUserAnswers(JSON.parse(savedAnswers));
-    } else {
-      // If no answers found, redirect to the default page
-      router.push('/result/default');
-      return;
-    }
-
-    const getPersonalityType = () => {
-      const types = {
-        L: 0, // Leadership
-        S: 0, // Support
-        A: 0, // Action
-        R: 0, // Reflection
-        F: 0, // Feeling
-        T: 0, // Thinking
-        O: 0, // Outward Faith
-        I: 0, // Inward Faith
-      };
+    // Check if we're in the browser environment
+    if (typeof window !== 'undefined') {
+      // Get answers from localStorage
+      const savedAnswers = localStorage.getItem('quiz_answers');
       
-      userAnswers.forEach((answer) => {
-        const [optionType] = answer.optionId.split('_');
-        if (optionType && (optionType === 'L' || optionType === 'S' || 
-            optionType === 'A' || optionType === 'R' || 
-            optionType === 'F' || optionType === 'T' || 
-            optionType === 'O' || optionType === 'I')) {
-          types[optionType as keyof typeof types]++;
+      if (!savedAnswers) {
+        // If no answers found, this is a direct access
+        setIsDirectAccess(true);
+        setIsLoading(false);
+        return;
+      }
+      
+      try {
+        const parsedAnswers = JSON.parse(savedAnswers);
+        setUserAnswers(parsedAnswers);
+        
+        const getPersonalityType = () => {
+          const types = {
+            L: 0, // Leadership
+            S: 0, // Support
+            A: 0, // Action
+            R: 0, // Reflection
+            F: 0, // Feeling
+            T: 0, // Thinking
+            O: 0, // Outward Faith
+            I: 0, // Inward Faith
+          };
+          
+          parsedAnswers.forEach((answer: Answer) => {
+            const [optionType] = answer.optionId.split('_');
+            if (optionType && (optionType === 'L' || optionType === 'S' || 
+                optionType === 'A' || optionType === 'R' || 
+                optionType === 'F' || optionType === 'T' || 
+                optionType === 'O' || optionType === 'I')) {
+              types[optionType as keyof typeof types]++;
+            }
+          });
+
+          // Determine the personality type based on the highest count in each pair
+          const leadership = types.L > types.S ? 'L' : 'S';
+          const action = types.A > types.R ? 'A' : 'R';
+          const feeling = types.F > types.T ? 'F' : 'T';
+          const faith = types.O > types.I ? 'O' : 'I';
+
+          return `${leadership}${action}${feeling}${faith}`;
+        };
+
+        const type = getPersonalityType();
+        if (type) {
+          // Fetch the result data for this personality type
+          fetch(`/result/${type}.json`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Result not found');
+              }
+              return response.json();
+            })
+            .then(data => {
+              setResult(data);
+              setIsLoading(false);
+            })
+            .catch(error => {
+              console.error('Error fetching result:', error);
+              setIsLoading(false);
+              setIsDirectAccess(true);
+            });
+        } else {
+          setIsLoading(false);
+          setIsDirectAccess(true);
         }
-      });
-
-      // Determine the personality type based on the highest count in each pair
-      const leadership = types.L > types.S ? 'L' : 'S';
-      const action = types.A > types.R ? 'A' : 'R';
-      const feeling = types.F > types.T ? 'F' : 'T';
-      const faith = types.O > types.I ? 'O' : 'I';
-
-      return `${leadership}${action}${feeling}${faith}`;
-    };
-
-    const type = getPersonalityType();
-    if (type) {
-      // Fetch the result data for this personality type
-      fetch(`/result/${type}.json`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Result not found');
-          }
-          return response.json();
-        })
-        .then(data => {
-          setResult(data);
-          setIsLoading(false);
-        })
-        .catch(error => {
-          console.error('Error fetching result:', error);
-          setIsLoading(false);
-          // If there's an error fetching the result, redirect to the default page
-          router.push('/result/default');
-        });
-    } else {
-      setIsLoading(false);
-      // If no personality type is determined, redirect to the default page
-      router.push('/result/default');
+      } catch (error) {
+        console.error('Error parsing answers:', error);
+        setIsLoading(false);
+        setIsDirectAccess(true);
+      }
     }
-  }, [userAnswers, router]);
+  }, []);
 
   const handleShare = async () => {
     if (!result) return;
@@ -123,8 +134,37 @@ export default function ResultPage() {
     );
   }
 
-  if (!result) {
-    return null; // This will be replaced by the redirect
+  if (isDirectAccess || !result) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-900 to-black p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="max-w-md text-center"
+        >
+          <h1 className="text-3xl font-bold text-white mb-4">결과를 찾을 수 없습니다</h1>
+          <p className="text-white/70 mb-8">
+            퀴즈를 먼저 완료한 후 결과 페이지를 방문해주세요.
+            성경 인물 유형을 알아보기 위해 퀴즈에 참여해보세요!
+          </p>
+          
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <Link 
+              href="/"
+              className="inline-flex items-center bg-yellow-400 text-blue-900 px-6 py-3 rounded-lg font-semibold hover:bg-yellow-300 transition-colors"
+            >
+              <ArrowLeftIcon className="h-5 w-5 mr-2" />
+              <span>메인으로 돌아가기</span>
+            </Link>
+          </motion.div>
+        </motion.div>
+      </div>
+    );
   }
 
   return (
