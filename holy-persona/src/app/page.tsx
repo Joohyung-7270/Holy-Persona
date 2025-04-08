@@ -254,7 +254,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h4 className="font-semibold">임주형</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">PM</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">TECH PM</p>
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-300">
@@ -275,7 +275,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h4 className="font-semibold">송윤재</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">개발자</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Developer</p>
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-300">
