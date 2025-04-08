@@ -1,44 +1,31 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface UserState {
+  id: string | null;
+  name: string | null;
+  email: string | null;
   isAuthenticated: boolean;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    biblicalMatch?: string;
-    matchPercentage?: number;
-  } | null;
 }
 
 const initialState: UserState = {
+  id: null,
+  name: null,
+  email: null,
   isAuthenticated: false,
-  user: null,
 };
 
-export const userSlice = createSlice({
+const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<UserState['user']>) => {
-      state.user = action.payload;
-      state.isAuthenticated = !!action.payload;
+    setUser: (state, action: PayloadAction<Partial<UserState>>) => {
+      return { ...state, ...action.payload };
     },
     clearUser: (state) => {
-      state.user = null;
-      state.isAuthenticated = false;
-    },
-    updateBiblicalMatch: (
-      state,
-      action: PayloadAction<{ character: string; percentage: number }>
-    ) => {
-      if (state.user) {
-        state.user.biblicalMatch = action.payload.character;
-        state.user.matchPercentage = action.payload.percentage;
-      }
+      return initialState;
     },
   },
 });
 
-export const { setUser, clearUser, updateBiblicalMatch } = userSlice.actions;
+export const { setUser, clearUser } = userSlice.actions;
 export default userSlice.reducer; 
