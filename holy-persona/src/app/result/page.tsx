@@ -51,87 +51,13 @@ const defaultDavidResult: ResultData = {
 export default function ResultPage() {
   const [result, setResult] = useState<ResultData>(defaultDavidResult);
   const [isLoading, setIsLoading] = useState(true);
-  const [userAnswers, setUserAnswers] = useState<Answer[]>([]);
-  const [isDirectAccess, setIsDirectAccess] = useState(false);
+  const [isDirectAccess, setIsDirectAccess] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    // Check if we're in the browser environment
-    if (typeof window !== 'undefined') {
-      // Get answers from localStorage
-      const savedAnswers = localStorage.getItem('quiz_answers');
-      
-      if (!savedAnswers) {
-        // If no answers found, this is a direct access
-        setIsDirectAccess(true);
-        setIsLoading(false);
-        return;
-      }
-      
-      try {
-        const parsedAnswers = JSON.parse(savedAnswers);
-        setUserAnswers(parsedAnswers);
-        
-        const getPersonalityType = () => {
-          const types = {
-            L: 0, // Leadership
-            S: 0, // Support
-            A: 0, // Action
-            R: 0, // Reflection
-            F: 0, // Feeling
-            T: 0, // Thinking
-            O: 0, // Outward Faith
-            I: 0, // Inward Faith
-          };
-          
-          parsedAnswers.forEach((answer: Answer) => {
-            const [optionType] = answer.optionId.split('_');
-            if (optionType && (optionType === 'L' || optionType === 'S' || 
-                optionType === 'A' || optionType === 'R' || 
-                optionType === 'F' || optionType === 'T' || 
-                optionType === 'O' || optionType === 'I')) {
-              types[optionType as keyof typeof types]++;
-            }
-          });
-
-          // Determine the personality type based on the highest count in each pair
-          const leadership = types.L > types.S ? 'L' : 'S';
-          const action = types.A > types.R ? 'A' : 'R';
-          const feeling = types.F > types.T ? 'F' : 'T';
-          const faith = types.O > types.I ? 'O' : 'I';
-
-          return `${leadership}${action}${feeling}${faith}`;
-        };
-
-        const type = getPersonalityType();
-        if (type) {
-          // Fetch the result data for this personality type
-          fetch(`/result/${type}.json`)
-            .then(response => {
-              if (!response.ok) {
-                throw new Error('Result not found');
-              }
-              return response.json();
-            })
-            .then(data => {
-              setResult(data);
-              setIsLoading(false);
-            })
-            .catch(error => {
-              console.error('Error fetching result:', error);
-              setIsLoading(false);
-              setIsDirectAccess(true);
-            });
-        } else {
-          setIsLoading(false);
-          setIsDirectAccess(true);
-        }
-      } catch (error) {
-        console.error('Error parsing answers:', error);
-        setIsLoading(false);
-        setIsDirectAccess(true);
-      }
-    }
+    // 항상 다윗의 결과를 보여주도록 설정
+    setResult(defaultDavidResult);
+    setIsLoading(false);
   }, []);
 
   const handleShare = async () => {
@@ -218,14 +144,32 @@ export default function ResultPage() {
 
                 {/* Image and Description Grid */}
                 <div className="grid md:grid-cols-2 gap-8 items-start">
-                  <div className="relative aspect-square rounded-lg overflow-hidden bg-black/30">
-                    <Image
-                      src={result.image}
-                      alt={result.name}
-                      fill
-                      className="object-contain p-4"
-                      priority
-                    />
+                  <div className="relative aspect-square rounded-lg overflow-hidden bg-black/30 flex items-center justify-center">
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Image
+                        src={result.image}
+                        alt="david"
+                        fill
+                        className="object-contain p-4"
+                        priority
+                        onError={(e) => {
+                          // 이미지 로딩 실패 시 대체 텍스트 표시
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            const fallback = document.createElement('div');
+                            fallback.className = 'text-center p-4';
+                            fallback.innerHTML = `
+                              <div class="text-4xl mb-2">👑</div>
+                              <div class="text-xl font-bold">${result.name}</div>
+                              <div class="text-yellow-400">${result.title}</div>
+                            `;
+                            parent.appendChild(fallback);
+                          }
+                        }}
+                      />
+                    </div>
                   </div>
                   <div className="space-y-6">
                     <div>
