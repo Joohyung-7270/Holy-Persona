@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { ShareIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
@@ -20,47 +20,68 @@ interface ResultData {
   blessing: string;
 }
 
+interface Answer {
+  questionId: string;
+  optionId: string;
+}
+
 export default function ResultPage() {
   const [result, setResult] = useState<ResultData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [userAnswers, setUserAnswers] = useState<any>(null);
+  const [userAnswers, setUserAnswers] = useState<Answer[]>([]);
 
   useEffect(() => {
-    // Get the personality result from localStorage
-    try {
-      const storedResult = localStorage.getItem('personalityResult');
-      
-      if (storedResult) {
-        const parsedResult = JSON.parse(storedResult);
-        setUserAnswers(parsedResult);
-      }
-    } catch (error) {
-      console.error('Error parsing stored result:', error);
+    // Get answers from localStorage
+    const savedAnswers = localStorage.getItem('quiz_answers');
+    if (savedAnswers) {
+      setUserAnswers(JSON.parse(savedAnswers));
     }
-    
-    // Always use the hardcoded David result for now
-    const davidResult: ResultData = {
-      type: "LAFO",
-      name: "다윗",
-      title: "하나님의 마음에 합한 자",
-      description: "하나님의 마음에 합한 사람이자 이스라엘의 위대한 왕이었던 다윗은 용기와 지혜, 예술적 감각을 겸비한 인물입니다. 시편의 저자이자 뛰어난 음악가였으며, 골리앗과 싸워 승리한 영웅적인 지도자였습니다.",
-      image: "/images/david.svg",
-      characteristics: [
-        "창의적이고 예술적인 감각이 뛰어남",
-        "용기있는 리더십",
-        "깊은 영성과 하나님과의 친밀한 관계",
-        "감정이 풍부하고 표현력이 뛰어남"
-      ],
-      mbti: {
-        type: "ENFP",
-        description: "열정적이고 창의적인 자유로운 영혼"
-      },
-      blessing: "여호와는 나의 목자시니 내게 부족함이 없으리로다. 그가 나를 푸른 초장에 누이시며 쉴 만한 물가로 인도하시는도다. <br /> - 시편 23:1-2"
+
+    const getPersonalityType = () => {
+      const types = {
+        L: 0, // Leadership
+        S: 0, // Support
+        A: 0, // Action
+        R: 0, // Reflection
+        F: 0, // Feeling
+        T: 0, // Thinking
+        O: 0, // Outward Faith
+        I: 0, // Inward Faith
+      };
+      
+      userAnswers.forEach((answer) => {
+        const optionType = answer.optionId.split('_')[0];
+        if (optionType in types) {
+          types[optionType as keyof typeof types]++;
+        }
+      });
+
+      // Determine the personality type based on the highest count in each pair
+      const leadership = types.L > types.S ? 'L' : 'S';
+      const action = types.A > types.R ? 'A' : 'R';
+      const feeling = types.F > types.T ? 'F' : 'T';
+      const faith = types.O > types.I ? 'O' : 'I';
+
+      return `${leadership}${action}${feeling}${faith}`;
     };
-    
-    setResult(davidResult);
-    setIsLoading(false);
-  }, []);
+
+    const type = getPersonalityType();
+    if (type) {
+      // Fetch the result data for this personality type
+      fetch(`/result/${type}.json`)
+        .then(response => response.json())
+        .then(data => {
+          setResult(data);
+          setIsLoading(false);
+        })
+        .catch(error => {
+          console.error('Error fetching result:', error);
+          setIsLoading(false);
+        });
+    } else {
+      setIsLoading(false);
+    }
+  }, [userAnswers]);
 
   const handleShare = async () => {
     if (!result) return;
@@ -76,116 +97,145 @@ export default function ResultPage() {
     }
   };
 
-  if (isLoading || !result) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-900 to-blue-700 text-white p-6 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-xl">결과를 불러오는 중...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-black">
+        <div className="text-white text-xl">결과를 불러오는 중...</div>
+      </div>
+    );
+  }
+
+  if (!result) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-black">
+        <div className="text-white text-xl">결과를 찾을 수 없습니다.</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-900 to-blue-700 text-white p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* 메인으로 돌아가기 버튼 */}
-        <Link href="/">
-          <motion.div 
-            className="flex items-center gap-2 text-white/80 mb-8 hover:text-yellow-300 transition-colors"
-            whileHover={{ x: -5 }}
-          >
-            <ArrowLeftIcon className="w-5 h-5" />
-            <span>홈으로 돌아가기</span>
-          </motion.div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white p-4 sm:p-8">
+      <motion.div 
+        className="max-w-4xl mx-auto"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Link 
+          href="/"
+          className="inline-flex items-center text-white/80 hover:text-yellow-400 transition-colors mb-8 group"
+        >
+          <ArrowLeftIcon className="h-5 w-5 mr-2 transform group-hover:-translate-x-1 transition-transform" />
+          <span>메인으로 돌아가기</span>
         </Link>
 
-        <motion.div
+        <motion.div 
+          className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 sm:p-8 border border-white/10"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="bg-white/10 backdrop-blur-lg rounded-lg p-8 shadow-lg"
+          transition={{ duration: 0.6, delay: 0.2 }}
         >
-          {/* 헤더 섹션 */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2">당신과 닮은 성경 인물은</h1>
-            <h2 className="text-4xl font-bold text-yellow-400 mb-4">{result.name}</h2>
-            <p className="text-xl text-blue-200">{result.title}</p>
-          </div>
-
-          {/* 이미지와 설명 섹션 */}
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
-            <div className="space-y-6">
-              <div className="relative h-[400px] rounded-lg overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <motion.div 
+              className="flex flex-col justify-center"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <h1 className="text-4xl font-bold mb-2">{result.name}</h1>
+              <p className="text-xl text-yellow-400 mb-4">{result.title}</p>
+              <div className="relative w-full max-w-sm mx-auto aspect-square">
                 <Image
                   src={result.image}
                   alt={result.name}
                   fill
-                  className="object-cover"
+                  className="object-contain"
+                  priority
                 />
               </div>
-              
-              {/* 사용자 답변 표시 - Bible 성격 유형 */}
-              {userAnswers && (
-                <div className="bg-white/5 rounded-lg p-6">
-                  <h3 className="text-xl font-semibold mb-4">당신의 Bible 성격 유형</h3>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-3xl font-bold text-yellow-400">{userAnswers.type}</span>
-                      <p className="text-blue-100 mt-2">당신의 성격 유형에 따른 성경 인물</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-xl font-semibold mb-3">인물 설명</h3>
-                <p className="text-blue-100">{result.description}</p>
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-3">주요 특성</h3>
-                <ul className="list-disc list-inside text-blue-100 space-y-2">
-                  {result.characteristics.map((char, index) => (
-                    <li key={index}>{char}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          {/* 축복의 말씀 섹션 */}
-          <div className="text-center mb-8 bg-gradient-to-r from-blue-800/50 to-blue-900/50 rounded-lg p-8 border border-blue-400/20">
-            <h3 className="text-2xl font-semibold mb-4 text-yellow-300">축복의 말씀</h3>
-            <blockquote className="text-xl italic text-blue-100 max-w-3xl mx-auto">
-              "{result.blessing}"
-            </blockquote>
-          </div>
-
-          {/* MBTI 섹션 */}
-          <div className="bg-white/5 rounded-lg p-6 mb-8">
-            <h3 className="text-xl font-semibold mb-4">MBTI 성격 유형</h3>
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-3xl font-bold text-yellow-400">{result.mbti.type}</span>
-                <p className="text-blue-100 mt-2">{result.mbti.description}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* 공유하기 버튼 */}
-          <div className="flex justify-center">
-            <button
-              onClick={handleShare}
-              className="flex items-center gap-2 bg-yellow-400 text-blue-900 px-6 py-3 rounded-lg font-semibold hover:bg-yellow-300 transition-colors"
+            </motion.div>
+            <motion.div 
+              className="flex flex-col justify-center"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <ShareIcon className="w-5 h-5" />
-              결과 공유하기
-            </button>
+              <div className="space-y-6">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.6 }}
+                >
+                  <h2 className="text-2xl font-semibold mb-3">성경 인물 유형</h2>
+                  <p className="text-white/80 leading-relaxed">
+                    {result.description}
+                  </p>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.7 }}
+                >
+                  <h2 className="text-2xl font-semibold mb-3">특징</h2>
+                  <ul className="list-disc list-inside space-y-2 text-white/80">
+                    {result.characteristics.map((characteristic, index) => (
+                      <motion.li 
+                        key={index}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3, delay: 0.8 + index * 0.1 }}
+                      >
+                        {characteristic}
+                      </motion.li>
+                    ))}
+                  </ul>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.9 }}
+            >
+              <h2 className="text-2xl font-semibold mb-3">MBTI 유형: {result.mbti.type}</h2>
+              <p className="text-white/80 leading-relaxed">
+                {result.mbti.description}
+              </p>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 1 }}
+            >
+              <h2 className="text-2xl font-semibold mb-3">축복의 말씀</h2>
+              <p className="text-white/80 leading-relaxed italic">
+                {result.blessing}
+              </p>
+            </motion.div>
           </div>
         </motion.div>
-      </div>
+
+        <motion.div 
+          className="flex justify-center mt-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 1.1 }}
+        >
+          <motion.button
+            onClick={handleShare}
+            className="flex items-center gap-2 bg-yellow-400 text-blue-900 px-6 py-3 rounded-lg font-semibold hover:bg-yellow-300 transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <ShareIcon className="w-5 h-5" />
+            결과 공유하기
+          </motion.button>
+        </motion.div>
+      </motion.div>
     </div>
   );
 } 

@@ -6,22 +6,20 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Holy Persona - AI Biblical Character Matching",
-  description: "Discover your biblical character match through AI-powered personality analysis",
+  title: "Holy Persona - 성경 인물과 매칭되는 당신의 성격 유형",
+  description: "AI 기반 성격 분석으로 성경 속 인물과 매칭되는 당신의 성격 유형을 알아보세요.",
   keywords: ["성경", "AI", "성격분석", "기독교", "성경인물", "성경캐릭터"],
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="ko">
       <body className={inter.className}>
-        <Providers>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

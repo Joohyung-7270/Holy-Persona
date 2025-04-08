@@ -102,27 +102,26 @@ export default function QuizPage() {
 
   const currentQuestionData = questions[currentQuestion];
 
-  // Find the previously selected option for the current question
-  const getPreviousAnswer = () => {
-    const previousAnswer = answers.find(answer => answer.questionId === currentQuestionData.id);
-    return previousAnswer ? previousAnswer.optionId : null;
-  };
-
   // Set the selected option when navigating to a question
   useEffect(() => {
-    const previousAnswer = getPreviousAnswer();
-    if (previousAnswer !== null) {
-      // Find the index of the option with this ID
-      const optionIndex = currentQuestionData.options.findIndex(option => option.id === previousAnswer);
-      if (optionIndex !== -1) {
-        setSelectedOption(optionIndex);
+    // Find the previously selected option for the current question
+    const getPreviousAnswer = () => {
+      const previousAnswer = answers.find(answer => answer.questionId === currentQuestionData.id);
+      return previousAnswer ? previousAnswer.optionId : null;
+    };
+    
+    // Set the selected option based on the previous answer
+    if (currentQuestion > 0) {
+      const previousAnswer = getPreviousAnswer();
+      if (previousAnswer !== null) {
+        setSelectedOption(previousAnswer);
       } else {
         setSelectedOption(null);
       }
     } else {
       setSelectedOption(null);
     }
-  }, [currentQuestion]);
+  }, [currentQuestion, answers, currentQuestionData.id]);
 
   const handleOptionSelect = (index: number, type: string) => {
     // Set the selected option for the current question

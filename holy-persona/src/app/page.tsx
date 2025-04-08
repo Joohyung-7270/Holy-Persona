@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRightIcon, SparklesIcon, BookOpenIcon, HeartIcon } from '@heroicons/react/24/outline';
+import { SparklesIcon, BookOpenIcon, HeartIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
 export default function Home() {
@@ -258,7 +258,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-300">
-                &ldquo;Holy Persona를 통해 제가 '다윗'과 유사하다는 것을 알게 되었습니다. 그의 믿음과 회개, 그리고 하나님에 대한 신뢰가 저에게 큰 영감이 되었습니다.&rdquo;
+                &ldquo;Holy Persona를 통해 제가 &apos;다윗&apos;과 유사하다는 것을 알게 되었습니다. 그의 믿음과 회개, 그리고 하나님에 대한 신뢰가 저에게 큰 영감이 되었습니다.&rdquo;
               </p>
             </motion.div>
             
@@ -279,7 +279,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-gray-600 dark:text-gray-300">
-                &ldquo;AI를 활용하여 제 자신을 분석한 결과, 제가 '요셉'과 유사하다는 것을 알게 되었습니다. 그의 인내와 믿음이 저에게 큰 위로가 되었고, 현재의 어려움을 극복할 수 있는 힘을 얻었습니다.&rdquo;
+                &ldquo;AI를 활용하여 제 자신을 분석한 결과, 제가 &apos;요셉&apos;과 유사하다는 것을 알게 되었습니다. 그의 인내와 믿음이 저에게 큰 위로가 되었고, 현재의 어려움을 극복할 수 있는 힘을 얻었습니다.&rdquo;
               </p>
             </motion.div>
           </div>
