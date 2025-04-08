@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Holy Persona 문의</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      background: linear-gradient(to right, #1e3a8a, #1e40af);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-radius: 8px 8px 0 0;
+    }
+    .content {
+      background-color: #f9fafb;
+      padding: 20px;
+      border: 1px solid #e5e7eb;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+    .field {
+      margin-bottom: 15px;
+    }
+    .field-label {
+      font-weight: bold;
+      color: #4b5563;
+      margin-bottom: 5px;
+    }
+    .field-value {
+      background-color: white;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #e5e7eb;
+    }
+    .message-box {
+      background-color: white;
+      padding: 15px;
+      border-radius: 4px;
+      border: 1px solid #e5e7eb;
+      white-space: pre-wrap;
+    }
+    .button {
+      display: inline-block;
+      background: linear-gradient(to right, #3b82f6, #2563eb);
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Holy Persona 문의</h1>
+  </div>
+  
+  <div class="content">
+    <p>안녕하세요, Holy Persona 팀입니다.</p>
+    <p>새로운 문의가 접수되었습니다. 아래 내용을 확인해주세요.</p>
+    
+    <div class="field">
+      <div class="field-label">이름</div>
+      <div class="field-value">{{name}}</div>
+    </div>
+    
+    <div class="field">
+      <div class="field-label">이메일</div>
+      <div class="field-value">{{email}}</div>
+    </div>
+    
+    <div class="field">
+      <div class="field-label">제목</div>
+      <div class="field-value">{{subject}}</div>
+    </div>
+    
+    <div class="field">
+      <div class="field-label">메시지</div>
+      <div class="message-box">{{message}}</div>
+    </div>
+    
+    <p>이 문의에 대한 답변은 24시간 이내에 제공될 예정입니다.</p>
+    
+    <a href="https://holypersona.xyz" class="button">Holy Persona 방문하기</a>
+  </div>
+  
+  <div class="footer">
+    <p>© 2023 Holy Persona. All rights reserved.</p>
+    <p>이 이메일은 Holy Persona 문의 양식을 통해 자동으로 생성되었습니다.</p>
+  </div>
+</body>
+</html> 
