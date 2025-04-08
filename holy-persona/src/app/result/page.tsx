@@ -26,8 +26,30 @@ interface Answer {
   optionId: string;
 }
 
+// Default David result
+const defaultDavidResult: ResultData = {
+  type: "LAFO",
+  name: "다윗",
+  title: "하나님의 마음에 합한 자",
+  description: "다윗은 용기 있고 지혜로운 지도자로서, 하나님의 마음에 합한 자로 불렸습니다. 그는 시인, 음악가, 전사, 그리고 왕으로서 다양한 재능을 가졌으며, 하나님과의 깊은 관계를 통해 영적 통찰력을 갖추었습니다. 그의 삶은 승리와 실패, 기쁨과 슬픔, 그리고 하나님에 대한 신앙의 여정을 보여줍니다.",
+  image: "/david.svg",
+  characteristics: [
+    "창의적이고 예술적인 감각",
+    "강한 리더십과 결단력",
+    "감정 표현이 풍부하고 정직함",
+    "영적 깊이와 하나님과의 친밀함",
+    "도전을 두려워하지 않는 용기",
+    "실수에서 배우고 회개하는 겸손"
+  ],
+  mbti: {
+    type: "ENFP",
+    description: "열정적인 중재자, 창의적이고 에너지 넘치는 성격으로 새로운 가능성을 탐구하는 것을 좋아합니다."
+  },
+  blessing: "여호와는 나의 목자시니 내가 부족함이 없으리로다. 그가 나를 푸른 초장에 누이시며 쉴 만한 물가로 인도하시는도다."
+};
+
 export default function ResultPage() {
-  const [result, setResult] = useState<ResultData | null>(null);
+  const [result, setResult] = useState<ResultData>(defaultDavidResult);
   const [isLoading, setIsLoading] = useState(true);
   const [userAnswers, setUserAnswers] = useState<Answer[]>([]);
   const [isDirectAccess, setIsDirectAccess] = useState(false);
@@ -134,39 +156,6 @@ export default function ResultPage() {
     );
   }
 
-  if (isDirectAccess || !result) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-900 to-black p-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-md text-center"
-        >
-          <h1 className="text-3xl font-bold text-white mb-4">결과를 찾을 수 없습니다</h1>
-          <p className="text-white/70 mb-8">
-            퀴즈를 먼저 완료한 후 결과 페이지를 방문해주세요.
-            성경 인물 유형을 알아보기 위해 퀴즈에 참여해보세요!
-          </p>
-          
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <Link 
-              href="/"
-              className="inline-flex items-center bg-yellow-400 text-blue-900 px-6 py-3 rounded-lg font-semibold hover:bg-yellow-300 transition-colors"
-            >
-              <ArrowLeftIcon className="h-5 w-5 mr-2" />
-              <span>메인으로 돌아가기</span>
-            </Link>
-          </motion.div>
-        </motion.div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white p-4 sm:p-8">
       <motion.div 
@@ -182,6 +171,15 @@ export default function ResultPage() {
           <ArrowLeftIcon className="h-5 w-5 mr-2 transform group-hover:-translate-x-1 transition-transform" />
           <span>메인으로 돌아가기</span>
         </Link>
+
+        {isDirectAccess && (
+          <div className="bg-yellow-400/20 border border-yellow-400/30 rounded-lg p-4 mb-6 text-yellow-200">
+            <p className="text-sm">
+              이 페이지는 퀴즈 결과를 보여주는 페이지입니다. 퀴즈를 완료하면 당신의 성경 인물 유형을 확인할 수 있습니다.
+              아래는 예시로 다윗의 결과입니다.
+            </p>
+          </div>
+        )}
 
         <motion.div 
           className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 sm:p-8 border border-white/10"
