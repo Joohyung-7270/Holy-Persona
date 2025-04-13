@@ -1,0 +1,10 @@
+{
+  "name": "holy-persona-image-processor",
+  "version": "1.0.0",
+  "description": "Script to download and process character images for HolyPersona",
+  "main": "download-images.js",
+  "dependencies": {
+    "sharp": "^0.33.2",
+    "axios": "^1.6.7"
+  }
+} 

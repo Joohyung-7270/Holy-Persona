@@ -104,24 +104,15 @@ export default function QuizPage() {
 
   // Set the selected option when navigating to a question
   useEffect(() => {
-    // Find the previously selected option for the current question
-    const getPreviousAnswer = () => {
-      const previousAnswer = answers.find(answer => answer.questionId === currentQuestionData.id);
-      return previousAnswer ? previousAnswer.optionId : null;
-    };
-    
-    // Set the selected option based on the previous answer
-    if (currentQuestion > 0) {
-      const previousAnswer = getPreviousAnswer();
-      if (previousAnswer !== null) {
-        setSelectedOption(previousAnswer);
+    if (currentQuestionData) {
+      const existingAnswer = answers.find(a => a.questionId === currentQuestionData.id);
+      if (existingAnswer) {
+        setSelectedOption(existingAnswer.optionId);
       } else {
         setSelectedOption(null);
       }
-    } else {
-      setSelectedOption(null);
     }
-  }, [currentQuestion, answers, currentQuestionData.id]);
+  }, [currentQuestion, answers, currentQuestionData?.id]);
 
   const handleOptionSelect = (index: number, type: string) => {
     // Set the selected option for the current question
@@ -140,11 +131,6 @@ export default function QuizPage() {
           type: type
         };
         setAnswers(updatedAnswers);
-        
-        // Update personality type
-        const personalityArray = personalityType.split('');
-        personalityArray[existingAnswerIndex] = type;
-        setPersonalityType(personalityArray.join(''));
       } else {
         // Add new answer
         setAnswers(prev => [...prev, {
@@ -152,15 +138,11 @@ export default function QuizPage() {
           optionId: currentQuestionData.options[index].id,
           type: type
         }]);
-        
-        // Update personality type
-        setPersonalityType(prev => prev + type);
       }
       
       if (currentQuestion < questions.length - 1) {
-        // Move to the next question and reset the selected option
+        // Move to the next question
         setCurrentQuestion(prev => prev + 1);
-        // The useEffect will handle setting the correct selected option for the next question
       } else {
         // Quiz completed, save results and navigate to result page
         saveResults();
@@ -195,8 +177,8 @@ export default function QuizPage() {
     // Create the final personality type string
     const finalType = `${result.leadership}${result.action}${result.feeling}${result.faith}`;
     
-    // Save to localStorage for now (in a real app, this would go to a backend)
-    localStorage.setItem('personalityResult', JSON.stringify({
+    // Save to localStorage
+    localStorage.setItem('answers', JSON.stringify({
       type: finalType,
       answers: answers
     }));

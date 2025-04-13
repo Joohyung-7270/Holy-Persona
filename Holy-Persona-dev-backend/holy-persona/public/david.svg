@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="800" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="800" fill="#1E3A8A"/>
+  
+  <!-- Halo effect -->
+  <circle cx="400" cy="300" r="150" fill="url(#haloGradient)"/>
+  
+  <!-- Stylized figure representing David -->
+  <path d="M400 250
+           C 450 250, 480 300, 480 350
+           C 480 400, 450 450, 400 450
+           C 350 450, 320 400, 320 350
+           C 320 300, 350 250, 400 250"
+        fill="#FFD700"/>
+  
+  <!-- Crown -->
+  <path d="M350 240
+           L 370 200 L 400 220 L 430 200 L 450 240
+           L 350 240"
+        fill="#FFD700"/>
+  
+  <!-- Harp -->
+  <path d="M500 350
+           C 520 300, 520 400, 500 450
+           L 480 440
+           C 500 400, 500 350, 480 310
+           L 500 350"
+        fill="#FFD700"/>
+  
+  <!-- Gradients -->
+  <defs>
+    <radialGradient id="haloGradient" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#FFD700" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#FFD700" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg> 

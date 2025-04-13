@@ -8,6 +8,10 @@ export const store = configureStore({
     user: userReducer,
     personality: personalityReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
